@@ -13,7 +13,7 @@ module.exports = {
             access_token: '733060994-OOpnGMwEnEbiXxaHJapCjzeuDPH3UaWtdEFBJAJM',
             access_token_secret: 'XaJqYp0hWHI1TcZlsAvXfPkXmMIoiQWgdfwLA6yWT64'
         });
-        var screen_name = 'postmanclient', userMap = {}, i = 0, dataArray = [] , retweetArray = [];
+        var screen_name = 'postmanclient', userMap = {}, i = 0, dataArray = [] , followerIdArray = [];
          //Get the follower ids
         T.get('followers/ids', {
             screen_name: screen_name
@@ -22,12 +22,12 @@ module.exports = {
                 console.log(err);
                 return;
             }
-            else if(data.errors)
+            else if(data.errors){
                 console.log(data.errors[0]);
                 return;
             }
 
-            for ( i = 0; i < data.ids.length; i++) followerIdArray.push(data.ids[i]);
+            for(i = 0; i < data.ids.length; i++) followerIdArray.push(data.ids[i]);
 
             if (data['next_cursor'] > 0) {  //more data remaining in API response
                 T.get('followers/ids', {
@@ -56,7 +56,6 @@ module.exports = {
                     for (var k = 0; k < data.length; k++) {
                         userMap[data[k].id] = data[k].followers_count
                     };
-                    }
                     j = j + 1;
                     if (j < followerChunks.length) {
                         T.get('users/lookup', {
@@ -113,7 +112,7 @@ module.exports = {
                                                 }
                                             });
                                         } else {
-                                            console.log("in createing  " + dataArray[h]);
+                                           
 
                                             Advocates.create({
                                                 userId: userId,
