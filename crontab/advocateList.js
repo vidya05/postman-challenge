@@ -14,40 +14,55 @@ module.exports = {
             access_token_secret: 'XaJqYp0hWHI1TcZlsAvXfPkXmMIoiQWgdfwLA6yWT64'
         });
         var screen_name = 'postmanclient', userMap = {}, i = 0, dataArray = [] , retweetArray = [];
-         //Get the retweers ids
+         //Get the follower ids
         T.get('followers/ids', {
             screen_name: screen_name
-        }, function getRetweeterIds(err, data, response) {
+        }, function getFollowerIds(err, data, response) {
+            if(err){
+                console.log(err);
+                return;
+            }
+            else if(data.errors)
+                console.log(data.errors[0]);
+                return;
+            }
 
-            for ( i = 0; i < data.ids.length; i++) retweetArray.push(data.ids[i]);
+            for ( i = 0; i < data.ids.length; i++) followerIdArray.push(data.ids[i]);
 
             if (data['next_cursor'] > 0) {  //more data remaining in API response
                 T.get('followers/ids', {
                     screen_name: screen_name,
                     cursor: data['next_cursor']
-                }, getRetweeterIds);
-            } else {                       //reached end of API response
-                var retweetChunks = [], i = 0,len = 0,j = 0;
+                }, getFollowerIds);
+            } else {     //reached end of API response
+               
+                var followerChunks = [], i = 0,len = 0;
 
-                for (i = 0, len = retweetArray.length; i < len; i = i + 100) { // because users/lookup API has limit of 100 ids
-                    retweetChunks.push(retweetArray.slice(i, i + 100));
+                for (i = 0, len = followerIdArray.length; i < len; i = i + 100) { // because users/lookup API has limit of 100 ids
+                    followerChunks.push(followerIdArray.slice(i, i + 100));
                 };
-
+                var j =0;
                 T.get('users/lookup', {
-                    user_id: retweetChunks[j].toString(),
+                    user_id: followerChunks[j].toString() || "",
                     include_entities: 'false'
-                }, function getRetweeterInfo(err, data, response) {
+                }, function getFollowerInfo(err, data, response) {
+                    if(data.errors){
+                        console.log(data.errors[0]);
+                    }
+                    else
                     console.log("j ::" + j);
                     console.log(data.length);
+
                     for (var k = 0; k < data.length; k++) {
                         userMap[data[k].id] = data[k].followers_count
                     };
+                    }
                     j = j + 1;
-                    if (j < retweetChunks.length) {
+                    if (j < followerChunks.length) {
                         T.get('users/lookup', {
-                            user_id: retweetChunks[j].toString(),
+                            user_id: followerChunks[j].toString(),
                             include_entities: 'false'
-                        }, getRetweeterInfo);
+                        }, getFollowerInfo);
                     } else {
                         console.log("searching tweets");
 
@@ -55,6 +70,10 @@ module.exports = {
                             q: screen_name,
                             count: 100
                         }, function getSearchTweetInfo(err, data, response) {
+                            if(err){
+                                console.log(err);
+                                return;
+                            }
 
                             for (i = 0; i < data.statuses.length; i++) userMap[data.statuses[i].user.id] = (data.statuses[i].user.followers_count) * 3; //dataArray.push({userId : data.statuses[i].user.id});
 

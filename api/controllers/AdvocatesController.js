@@ -18,7 +18,8 @@ module.exports = {
             access_token_secret: 'XaJqYp0hWHI1TcZlsAvXfPkXmMIoiQWgdfwLA6yWT64'
         });
 
-        var retweetUsers = [] ,reach = 0, retweetcount, resp = {}, tweet_id = req.id || '210462857140252672';
+        var retweetUsers = [] ,reach = 0, retweetcount, resp = {}, tweet_id = req.param('id');
+        console.log(tweet_id);
 
         //Get the tweet info
         T.get('statuses/show', {
@@ -34,6 +35,7 @@ module.exports = {
                 resp['is_With_Held'] = data.withheld_copyright; //withheld due to content
                 resp['with_Held_Countries_List'] = data.withheld_in_countries;
                 //Get the retweers ids
+                if(data.retweet_count >0){
                 T.get('statuses/retweeters/ids', {
                     id: tweet_id
                 }, function getRetweeterIds(err, data, response) {
@@ -46,12 +48,13 @@ module.exports = {
                         }, getRetweeterIds);
                     } else {                    //reached end of API response
                         var retweeterIdChunks = [];
-                        var i = 0,j = 0,len = 0;
+                        var i = 0,len = 0;
+                        console.log(retweetUsers);
                         for (i = 0, len = retweetUsers.length; i < len; i = i + 100) { // because users/lookup API has limit of 100 ids
                             retweeterIdChunks.push(retweetUsers.slice(i, i + 100))
-                        };
-
+                        }; 
                         //Get the follwers of each retweeter
+                        var j =0;
                         T.get('users/lookup', {
                             user_id: retweeterIdChunks[j].toString(),
                             include_entities: 'false'
@@ -75,6 +78,12 @@ module.exports = {
                     }
                 });
             }
+            else{
+                resp['reach'] = reach;
+                res.send(resp);
+            }
+
+        }
 
         });
 
@@ -94,6 +103,7 @@ module.exports = {
         }).exec(function(err, users) {
             if (err) {
                 console.log("Error" + err);
+                res.send(err);
             } else {
                 console.log(users);
                 res.send(users);
