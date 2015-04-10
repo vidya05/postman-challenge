@@ -18,7 +18,7 @@ module.exports = {
             access_token_secret: 'XaJqYp0hWHI1TcZlsAvXfPkXmMIoiQWgdfwLA6yWT64'
         });
 
-        var retweetUsers = [] ,reach = 0; retweetcount; resp = {}, tweet_id = req.id || '210462857140252672';
+        var retweetUsers = [] ,reach = 0, retweetcount, resp = {}, tweet_id = req.id || '210462857140252672';
 
         //Get the tweet info
         T.get('statuses/show', {
