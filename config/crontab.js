@@ -14,7 +14,7 @@ module.exports.crontab = {
    * so in the example below it will run every minute
    */
 
-  '0 0 * * * *': function(){
+  '0 */1 * * * ': function(){
       require('../crontab/advocateList.js').run();
   }
 };
