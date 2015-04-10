@@ -93,8 +93,8 @@ module.exports = {
     //Get the list of Advocates in sorted order by their priority
     'listOfAdv': function(req, res, next) {
 
-        var page = req.page || 1;
-        var limit = req.limit || 10;
+        var page = req.param('page') || 1;
+        var limit = req.param('limit') || 10;
         Advocates.find().sort({  //fetching from DB
             'priority': -1
         }).paginate({
