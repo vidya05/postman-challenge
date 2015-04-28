@@ -21,4 +21,11 @@ module.exports = {
   //   connection: 'someMongodbServer'
   // }
 
+  twitter: {
+		consumer_key: 'XklIkJeQlzctxe0Cqgjs6rDJ4',
+        consumer_secret: 'eOjFiJsokjGz2Ob8yzBRfFw9MR5G5VLCODI1vEY90sM8bsPHvp',
+        access_token: '733060994-OOpnGMwEnEbiXxaHJapCjzeuDPH3UaWtdEFBJAJM',
+        access_token_secret: 'XaJqYp0hWHI1TcZlsAvXfPkXmMIoiQWgdfwLA6yWT64'
+	}
+
 };

@@ -1,18 +1,22 @@
-var Twit = require('twit');
 
+/** @todo Move this file to services. 
+  */
+
+var Twit = require('twit');
 
 module.exports = {
 
     'run': function() {// Runs every one hour
         
         console.log("Running scheduled job to get Advocates data");
-
+        var config = sails.config;
         var T = new Twit({
-            consumer_key: 'XklIkJeQlzctxe0Cqgjs6rDJ4',
-            consumer_secret: 'eOjFiJsokjGz2Ob8yzBRfFw9MR5G5VLCODI1vEY90sM8bsPHvp',
-            access_token: '733060994-OOpnGMwEnEbiXxaHJapCjzeuDPH3UaWtdEFBJAJM',
-            access_token_secret: 'XaJqYp0hWHI1TcZlsAvXfPkXmMIoiQWgdfwLA6yWT64'
+            consumer_key: config.twitter.consumer_key,
+            consumer_secret: config.twitter.consumer_secret,
+            access_token: config.twitter.access_token,
+            access_token_secret: config.twitter.access_token_secret
         });
+
         var screen_name = 'postmanclient', userMap = {}, i = 0, dataArray = [] , followerIdArray = [];
          //Get the follower ids
         T.get('followers/ids', {
@@ -74,7 +78,15 @@ module.exports = {
                                 return;
                             }
 
-                            for (i = 0; i < data.statuses.length; i++) userMap[data.statuses[i].user.id] = (data.statuses[i].user.followers_count) * 3; //dataArray.push({userId : data.statuses[i].user.id});
+                            for (i = 0; i < data.statuses.length; i++){ 
+                                if(userMap[data.statuses[i].user.id] ){
+                                   userMap[data.statuses[i].user.id] = userMap[data.statuses[i].user.id] + data.statuses[i].user.followers_count; 
+                                }
+                                else{
+                                   userMap[data.statuses[i].user.id] = data.statuses[i].user.followers_count); 
+                                }
+                             
+                           }
 
 
                             if (data && data.search_metadata.next_results) {

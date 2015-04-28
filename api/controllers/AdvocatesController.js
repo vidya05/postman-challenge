@@ -10,12 +10,12 @@ module.exports = {
 
     //Track the reach of the tweet.
     'trackTweet': function(req, res, next) {
-
+        var config = sails.config;
         var T = new Twit({
-            consumer_key: 'XklIkJeQlzctxe0Cqgjs6rDJ4',
-            consumer_secret: 'eOjFiJsokjGz2Ob8yzBRfFw9MR5G5VLCODI1vEY90sM8bsPHvp',
-            access_token: '733060994-OOpnGMwEnEbiXxaHJapCjzeuDPH3UaWtdEFBJAJM',
-            access_token_secret: 'XaJqYp0hWHI1TcZlsAvXfPkXmMIoiQWgdfwLA6yWT64'
+            consumer_key: config.twitter.consumer_key,
+            consumer_secret: config.twitter.consumer_secret,
+            access_token: config.twitter.access_token,
+            access_token_secret: config.twitter.access_token_secret
         });
 
         var retweetUsers = [] ,reach = 0, retweetcount, resp = {}, tweet_id = req.param('id');
@@ -53,7 +53,9 @@ module.exports = {
                         for (i = 0, len = retweetUsers.length; i < len; i = i + 100) { // because users/lookup API has limit of 100 ids
                             retweeterIdChunks.push(retweetUsers.slice(i, i + 100))
                         }; 
-                        //Get the follwers of each retweeter
+
+                        //Get the followers of each retweeter
+                        /**@todo Should take care of duplicacy while calculating reach.*/
                         var j =0;
                         T.get('users/lookup', {
                             user_id: retweeterIdChunks[j].toString(),
